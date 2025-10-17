@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Football Schedule Icon">
+  <defs>
+    <style>
+      .green { fill: #16A34A; }
+      .white { fill: #FFFFFF; }
+    </style>
+  </defs>
+
+  <!-- Background (transparent by default for favicon usage) -->
+
+  <!-- Calendar body -->
+  <rect x="48" y="88" rx="56" ry="56" width="416" height="336" class="green"/>
+  <!-- Calendar inner sheet -->
+  <rect x="96" y="168" rx="24" ry="24" width="320" height="224" class="white"/>
+
+  <!-- Calendar rings -->
+  <rect x="128" y="64" rx="20" ry="20" width="48" height="64" class="green"/>
+  <rect x="336" y="64" rx="20" ry="20" width="48" height="64" class="green"/>
+
+  <!-- Soccer ball (centered on inner sheet) -->
+  <g transform="translate(256,280)">
+    <!-- Ball base -->
+    <circle r="88" class="green"/>
+    <circle r="76" class="white"/>
+
+    <!-- Hex/Pent patches (stylized) -->
+    <!-- Center pentagon -->
+    <path class="green" d="M0,-34 L28,-20 L18,10 L-18,10 L-28,-20 Z"/>
+    <!-- Surrounding shapes -->
+    <path class="green" d="M0,-74 L18,-56 L-18,-56 Z"/>
+    <path class="green" d="M64,-22 L44,-6 L56,22 L84,10 Z"/>
+    <path class="green" d="M40,44 L20,30 L-0,54 L20,70 Z"/>
+    <path class="green" d="M-64,-22 L-84,10 L-56,22 L-44,-6 Z"/>
+    <path class="green" d="M-40,44 L-20,70 L0,54 L-20,30 Z"/>
+  </g>
+</svg>

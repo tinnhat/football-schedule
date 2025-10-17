@@ -1,9 +1,5 @@
 import { useMemo } from 'react'
-import {
-  AreaChartOutlined,
-  CheckCircleTwoTone,
-  FieldTimeOutlined
-} from '@ant-design/icons'
+import { AreaChartOutlined, CheckCircleTwoTone, FieldTimeOutlined } from '@ant-design/icons'
 import { Card, Col, Empty, Row, Skeleton, Space, Statistic, Typography } from 'antd'
 import dayjs from 'dayjs'
 import { FINISHED_STATUSES, SCHEDULED_STATUSES } from '../constants'
@@ -12,29 +8,32 @@ import { MatchCard } from './MatchCard'
 const { Title, Text } = Typography
 
 export function MatchesSection({ matches, loading, onPredict }) {
-  const { totalMatches, finishedCount, scheduledCount, earliestKickoff, latestKickoff } = useMemo(() => {
-    if (!matches.length) {
-      return {
-        totalMatches: 0,
-        finishedCount: 0,
-        scheduledCount: 0,
-        earliestKickoff: null,
-        latestKickoff: null
+  const { totalMatches, finishedCount, scheduledCount, earliestKickoff, latestKickoff } =
+    useMemo(() => {
+      if (!matches.length) {
+        return {
+          totalMatches: 0,
+          finishedCount: 0,
+          scheduledCount: 0,
+          earliestKickoff: null,
+          latestKickoff: null,
+        }
       }
-    }
 
-    const sortedByKickoff = [...matches].sort((a, b) => dayjs(a.utcDate).valueOf() - dayjs(b.utcDate).valueOf())
-    const finished = matches.filter((match) => FINISHED_STATUSES.has(match.status)).length
-    const scheduled = matches.filter((match) => SCHEDULED_STATUSES.has(match.status)).length
+      const sortedByKickoff = [...matches].sort(
+        (a, b) => dayjs(a.utcDate).valueOf() - dayjs(b.utcDate).valueOf()
+      )
+      const finished = matches.filter(match => FINISHED_STATUSES.has(match.status)).length
+      const scheduled = matches.filter(match => SCHEDULED_STATUSES.has(match.status)).length
 
-    return {
-      totalMatches: matches.length,
-      finishedCount: finished,
-      scheduledCount: scheduled,
-      earliestKickoff: sortedByKickoff[0]?.utcDate ?? null,
-      latestKickoff: sortedByKickoff[sortedByKickoff.length - 1]?.utcDate ?? null
-    }
-  }, [matches])
+      return {
+        totalMatches: matches.length,
+        finishedCount: finished,
+        scheduledCount: scheduled,
+        earliestKickoff: sortedByKickoff[0]?.utcDate ?? null,
+        latestKickoff: sortedByKickoff[sortedByKickoff.length - 1]?.utcDate ?? null,
+      }
+    }, [matches])
 
   const renderSkeletons = () => (
     <Row gutter={[16, 16]}>
@@ -50,7 +49,7 @@ export function MatchesSection({ matches, loading, onPredict }) {
 
   const renderMatches = () => (
     <Row gutter={[16, 16]}>
-      {matches.map((match) => (
+      {matches.map(match => (
         <Col key={match.id} xs={24} md={12} xl={8}>
           <MatchCard match={match} onPredict={onPredict} />
         </Col>
@@ -75,7 +74,9 @@ export function MatchesSection({ matches, loading, onPredict }) {
             <Statistic
               title='Total matches'
               value={totalMatches}
-              prefix={<AreaChartOutlined className='summary-card__icon summary-card__icon--primary' />}
+              prefix={
+                <AreaChartOutlined className='summary-card__icon summary-card__icon--primary' />
+              }
             />
           </Card>
         </Col>
@@ -100,12 +101,43 @@ export function MatchesSection({ matches, loading, onPredict }) {
       </Row>
 
       {earliestKickoff && latestKickoff && (
-        <Space direction='vertical' size={0} className='matches-panel__window'>
-          <Text type='secondary'>Time window</Text>
-          <Text strong>
-            {dayjs(earliestKickoff).format('DD MMM YYYY HH:mm')} – {dayjs(latestKickoff).format('DD MMM YYYY HH:mm')}
-          </Text>
-        </Space>
+        <Card bordered={false} className='matches-panel__window' style={{ marginBottom: 16 }}>
+          <Space direction='vertical' size={8} style={{ width: '100%' }}>
+            <Text
+              type='secondary'
+              style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}
+            >
+              Match Time Window
+            </Text>
+
+            <Space direction='vertical' size={4} style={{ width: '100%' }}>
+              <div
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+              >
+                <Text strong style={{ color: '#1890ff', fontSize: '13px' }}>
+                  UTC Time
+                </Text>
+                <Text style={{ fontSize: '13px', fontFamily: 'monospace' }}>
+                  {dayjs(earliestKickoff).format('DD/MM/YYYY HH:mm')} →{' '}
+                  {dayjs(latestKickoff).format('DD/MM/YYYY HH:mm')}
+                </Text>
+              </div>
+
+              <div
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+              >
+                <Text strong style={{ color: '#52c41a', fontSize: '13px' }}>
+                  Vietnam Time (UTC+7)
+                </Text>
+                {" "}
+                <Text style={{ fontSize: '13px', fontFamily: 'monospace' }}>
+                  {dayjs(earliestKickoff).add(7, 'hour').format('DD/MM/YYYY HH:mm')} →{' '}
+                  {dayjs(latestKickoff).add(7, 'hour').format('DD/MM/YYYY HH:mm')}
+                </Text>
+              </div>
+            </Space>
+          </Space>
+        </Card>
       )}
 
       {loading ? (

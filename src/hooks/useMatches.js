@@ -7,7 +7,7 @@ function formatDate(value) {
   return value ? dayjs(value).format('YYYY-MM-DD') : undefined
 }
 
-export function useMatches({ dateFrom, dateTo, competitions, statusFilter, token }) {
+export function useMatches({ dateFrom, dateTo, competition, statusFilter, token }) {
   const [matches, setMatches] = useState([])
   const [loading, setLoading] = useState(false)
 
@@ -33,7 +33,7 @@ export function useMatches({ dateFrom, dateTo, competitions, statusFilter, token
         return
       }
 
-      if (!competitions.length) {
+      if (!competition) {
         setMatches([])
         return
       }
@@ -47,30 +47,25 @@ export function useMatches({ dateFrom, dateTo, competitions, statusFilter, token
           dateTo: formatDate(dateTo)
         })
 
-        const responses = await Promise.all(
-          competitions.map(async (competitionCode) => {
-            const response = await fetch(
-              `${apiBaseUrl}/v4/competitions/${competitionCode}/matches?${params.toString()}`,
-              {
-                headers: {
-                  'X-Auth-Token': token
-                },
-                signal: controller.signal
-              }
-            )
-
-            if (!response.ok) {
-              const errorBody = await response.json().catch(() => undefined)
-              const messageText = errorBody?.message || response.statusText
-              throw new Error(`Unable to load ${competitionCode} matches: ${messageText}`)
-            }
-
-            const data = await response.json()
-            return data.matches || []
-          })
+        const competitionCode = competition
+        const response = await fetch(
+          `${apiBaseUrl}/v4/competitions/${competitionCode}/matches?${params.toString()}`,
+          {
+            headers: {
+              'X-Auth-Token': token
+            },
+            signal: controller.signal
+          }
         )
 
-        const merged = responses.flat()
+        if (!response.ok) {
+          const errorBody = await response.json().catch(() => undefined)
+          const messageText = errorBody?.message || response.statusText
+          throw new Error(`Unable to load ${competitionCode} matches: ${messageText}`)
+        }
+
+        const data = await response.json()
+        const merged = data.matches || []
 
         const filtered = merged.filter((match) => {
           if (statusFilter === 'ALL') return true
@@ -106,7 +101,7 @@ export function useMatches({ dateFrom, dateTo, competitions, statusFilter, token
       isMounted = false
       controller.abort()
     }
-  }, [apiBaseUrl, competitions, dateFrom, dateTo, statusFilter, token])
+  }, [apiBaseUrl, competition, dateFrom, dateTo, statusFilter, token])
 
   return { matches, loading }
 }

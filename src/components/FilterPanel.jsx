@@ -3,7 +3,7 @@ import {
   CalendarOutlined,
   FilterOutlined,
   FlagOutlined,
-  ThunderboltOutlined
+  ThunderboltOutlined,
 } from '@ant-design/icons'
 import {
   Button,
@@ -15,7 +15,7 @@ import {
   Select,
   Space,
   Tooltip,
-  Typography
+  Typography,
 } from 'antd'
 import dayjs from 'dayjs'
 
@@ -29,7 +29,7 @@ const presetOptions = [
     getRange: () => {
       const start = dayjs().startOf('day')
       return { from: start, to: start.endOf('day') }
-    }
+    },
   },
   {
     key: 'NEXT_7',
@@ -38,7 +38,7 @@ const presetOptions = [
     getRange: () => {
       const start = dayjs().startOf('day')
       return { from: start, to: start.add(6, 'day').endOf('day') }
-    }
+    },
   },
   {
     key: 'NEXT_30',
@@ -47,8 +47,8 @@ const presetOptions = [
     getRange: () => {
       const start = dayjs().startOf('day')
       return { from: start, to: start.add(29, 'day').endOf('day') }
-    }
-  }
+    },
+  },
 ]
 
 export function FilterPanel({
@@ -61,21 +61,21 @@ export function FilterPanel({
   onDateFromChange,
   onDateToChange,
   onCompetitionsChange,
-  onStatusChange
+  onStatusChange,
 }) {
   const [activePreset, setActivePreset] = useState(() => presetOptions[1].key)
 
   const statusSegmentedOptions = useMemo(
     () =>
-      statusOptions.map((option) => ({
+      statusOptions.map(option => ({
         label: option.label,
-        value: option.value
+        value: option.value,
       })),
     [statusOptions]
   )
 
-  const handlePresetSelect = (key) => {
-    const preset = presetOptions.find((item) => item.key === key)
+  const handlePresetSelect = key => {
+    const preset = presetOptions.find(item => item.key === key)
     if (!preset) return
 
     const { from, to } = preset.getRange()
@@ -84,17 +84,17 @@ export function FilterPanel({
     setActivePreset(key)
   }
 
-  const handleDateFromChange = (value) => {
+  const handleDateFromChange = value => {
     onDateFromChange(value)
     setActivePreset(null)
   }
 
-  const handleDateToChange = (value) => {
+  const handleDateToChange = value => {
     onDateToChange(value)
     setActivePreset(null)
   }
 
-  const disabledDate = (current) => {
+  const disabledDate = current => {
     if (!current) return false
     const earliest = dayjs().subtract(1, 'year')
     const latest = dayjs().add(1, 'year')
@@ -115,7 +115,7 @@ export function FilterPanel({
       }
       extra={
         <Space size='small'>
-          {presetOptions.map((preset) => (
+          {presetOptions.map(preset => (
             <Tooltip key={preset.key} title={`Show matches for ${preset.label.toLowerCase()}`}>
               <Button
                 type={activePreset === preset.key ? 'primary' : 'default'}
@@ -161,16 +161,16 @@ export function FilterPanel({
           <Space direction='vertical' className='filter-control'>
             <Text type='secondary'>Competitions</Text>
             <Select
-              mode='multiple'
               size='large'
               value={selectedCompetitions}
               onChange={onCompetitionsChange}
-              options={competitions.map((competition) => ({
+              options={competitions.map(competition => ({
                 label: competition.name,
-                value: competition.code
+                value: competition.code,
               }))}
               placeholder='Select competitions'
               maxTagCount='responsive'
+              style={{ width: '100%' }}
             />
           </Space>
         </Col>

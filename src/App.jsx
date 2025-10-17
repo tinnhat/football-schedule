@@ -19,9 +19,7 @@ function App() {
   const today = useMemo(() => dayjs(), [])
   const [dateFrom, setDateFrom] = useState(today.startOf('day'))
   const [dateTo, setDateTo] = useState(today.add(6, 'day').endOf('day'))
-  const [selectedCompetitions, setSelectedCompetitions] = useState(
-    COMPETITIONS.map((competition) => competition.code)
-  )
+  const [selectedCompetitions, setSelectedCompetitions] = useState(COMPETITIONS[0].code)
   const [statusFilter, setStatusFilter] = useState('ALL')
   const [predictionModalOpen, setPredictionModalOpen] = useState(false)
   const [predictionLoading, setPredictionLoading] = useState(false)
@@ -31,12 +29,12 @@ function App() {
   const { matches, loading } = useMatches({
     dateFrom,
     dateTo,
-    competitions: selectedCompetitions,
+    competition: selectedCompetitions,
     statusFilter,
-    token: footballToken
+    token: footballToken,
   })
 
-  const handlePredict = async (match) => {
+  const handlePredict = async match => {
     setSelectedMatch(match)
     setPredictionResult('')
     setPredictionModalOpen(true)
@@ -87,7 +85,7 @@ function App() {
         <MatchesSection matches={matches} loading={loading} onPredict={handlePredict} />
       </Content>
       <Footer style={{ textAlign: 'center' }}>
-        Data from football-data.org. Predictions powered by OpenAI.
+        Data from football-data.org.
       </Footer>
 
       <PredictionModal

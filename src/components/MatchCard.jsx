@@ -2,7 +2,7 @@ import {
   CalendarOutlined,
   EnvironmentOutlined,
   PlayCircleOutlined,
-  TrophyOutlined
+  TrophyOutlined,
 } from '@ant-design/icons'
 import { Button, Card, Divider, Space, Tag, Tooltip, Typography } from 'antd'
 import dayjs from 'dayjs'
@@ -11,9 +11,15 @@ import { FINISHED_STATUSES, SCHEDULED_STATUSES } from '../constants'
 const { Text } = Typography
 
 function TeamRow({ team, score, highlight }) {
+  console.log(team)
+
   return (
     <div className={`match-card__team-row ${highlight ? 'match-card__team-row--highlight' : ''}`}>
-      <div className='match-card__team-badge'>{team?.name?.[0] || '?'}</div>
+      <img
+        src={team?.crest ? team.crest : 'https://via.placeholder.com/40?text=TBC'}
+        alt={team?.name || 'TBC'}
+        className='match-card__team-crest'
+      />
       <div className='match-card__team-name'>{team?.name || 'TBC'}</div>
       <div className='match-card__score'>{score}</div>
     </div>
@@ -44,7 +50,6 @@ export function MatchCard({ match, onPredict }) {
   const fullTimeScore = match.score?.fullTime ?? {}
   const homeScore = isFinished ? fullTimeScore.home ?? 0 : '–'
   const awayScore = isFinished ? fullTimeScore.away ?? 0 : '–'
-  const stageLabel = match.stage ? match.stage.replace(/_/g, ' ') : 'Regular stage'
 
   return (
     <Card className='match-card' bordered={false} bodyStyle={{ padding: 20 }}>
@@ -56,20 +61,36 @@ export function MatchCard({ match, onPredict }) {
             </Tag>
             {getStatusTag(match.status)}
           </Space>
-          <Text type='secondary'>{stageLabel}</Text>
         </div>
 
         <div className='match-card__teams'>
           <TeamRow team={match.homeTeam} score={homeScore} highlight={homeScore > awayScore} />
-          <Divider plain className='match-card__divider'>vs</Divider>
+          <Divider plain className='match-card__divider'>
+            vs
+          </Divider>
           <TeamRow team={match.awayTeam} score={awayScore} highlight={awayScore > homeScore} />
         </div>
 
         <div className='match-card__meta'>
-          <Space size='large'>
-            <Space size='small'>
-              <CalendarOutlined />
-              <Text>{kickoff.format('DD MMM YYYY HH:mm')}</Text>
+          <Space direction='vertical' size='small' style={{ width: '100%' }}>
+            <Space size='middle' style={{ width: '100%', justifyContent: 'space-between' }}>
+              <Space size='small'>
+                <CalendarOutlined />
+                <Text strong style={{ color: '#1890ff', fontSize: '12px' }}>
+                  UTC:
+                </Text>
+                <Text style={{ fontFamily: 'monospace' }}>
+                  {kickoff.format('DD/MM/YYYY HH:mm')}
+                </Text>
+              </Space>
+              <Space size='small'>
+                <Text strong style={{ color: '#52c41a', fontSize: '12px' }}>
+                  VN:
+                </Text>
+                <Text style={{ fontFamily: 'monospace' }}>
+                  {kickoff.add(7, 'hour').format('DD/MM/YYYY HH:mm')}
+                </Text>
+              </Space>
             </Space>
             {match.venue && (
               <Space size='small'>
@@ -80,11 +101,12 @@ export function MatchCard({ match, onPredict }) {
           </Space>
         </div>
 
-        <Tooltip title='Ask the AI assistant for a likely standout player based on form and context.'>
+        {/* pending feature */}
+        {/* <Tooltip title='Ask the AI assistant for a likely standout player based on form and context.'>
           <Button type='primary' block onClick={() => onPredict(match)}>
             Predict standout player
           </Button>
-        </Tooltip>
+        </Tooltip> */}
       </Space>
     </Card>
   )

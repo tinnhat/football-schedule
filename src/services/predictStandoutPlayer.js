@@ -2,40 +2,52 @@ import dayjs from 'dayjs'
 
 export async function predictStandoutPlayer(match, token) {
   if (!token) {
-    return 'Set the VITE_OPENAI_API_KEY environment variable to enable predictions.'
+    return 'Set the HUGGINGFACE_API_KEY environment variable to enable predictions.'
   }
 
-  const prompt = `You are a football data analyst. Based on the upcoming or completed match below, predict which single player is most likely to be the standout performer. Provide a short justification referencing relevant statistics, form or historical performance.\n\nMatch details:\nCompetition: ${match.competition?.name}\nMatchday: ${match.matchday}\nVenue: ${match.venue || 'Unknown'}\nDate (UTC): ${dayjs(match.utcDate).format('YYYY-MM-DD HH:mm')}\nHome team: ${match.homeTeam?.name}\nAway team: ${match.awayTeam?.name}\nCurrent status: ${match.status}\nScore (if available): ${match.score?.fullTime?.home ?? 'N/A'} - ${match.score?.fullTime?.away ?? 'N/A'}\n\nRespond with the player name and reasoning in a concise paragraph.`
+  const prompt = `
+You are a football data analyst. Based on the upcoming or completed match below, predict which single player is most likely to be the standout performer. Provide a short justification referencing relevant statistics, form, or historical performance.
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a helpful football analytics assistant.'
+Match details:
+Competition: ${match.competition?.name}
+Matchday: ${match.matchday}
+Venue: ${match.venue || 'Unknown'}
+Date (UTC): ${dayjs(match.utcDate).format('YYYY-MM-DD HH:mm')}
+Home team: ${match.homeTeam?.name}
+Away team: ${match.awayTeam?.name}
+Current status: ${match.status}
+Score (if available): ${match.score?.fullTime?.home ?? 'N/A'} - ${
+    match.score?.fullTime?.away ?? 'N/A'
+  }
+
+Respond with the player name and reasoning in a concise paragraph.
+`
+
+  const response = await fetch(
+    'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        inputs: prompt,
+        parameters: {
+          max_new_tokens: 200,
+          temperature: 0.7,
         },
-        {
-          role: 'user',
-          content: prompt
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 250
-    })
-  })
+      }),
+    }
+  )
 
   if (!response.ok) {
     const errorBody = await response.json().catch(() => undefined)
-    const messageText = errorBody?.error?.message || response.statusText
+    const messageText = errorBody?.error || response.statusText
     throw new Error(messageText)
   }
 
   const data = await response.json()
-  return data.choices?.[0]?.message?.content?.trim() || 'No prediction available.'
+
+  return data?.[0]?.generated_text?.trim() || 'No prediction available.'
 }
