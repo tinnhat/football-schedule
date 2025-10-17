@@ -1,0 +1,41 @@
+.app-layout {
+  min-height: 100vh;
+}
+
+.app-header {
+  background: linear-gradient(135deg, #001529 0%, #003a8c 100%);
+  padding: 24px;
+  text-align: center;
+}
+
+.app-content {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.filter-panel {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+}
+
+.filter-control {
+  width: 100%;
+}
+
+.table-wrapper {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.loading-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+}
