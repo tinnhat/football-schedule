@@ -18,7 +18,7 @@ const openAiToken = import.meta.env.VITE_OPENAI_API_KEY
 function App() {
   const today = useMemo(() => dayjs(), [])
   const [dateFrom, setDateFrom] = useState(today.startOf('day'))
-  const [dateTo, setDateTo] = useState(today.add(7, 'day').startOf('day'))
+  const [dateTo, setDateTo] = useState(today.add(6, 'day').endOf('day'))
   const [selectedCompetitions, setSelectedCompetitions] = useState(
     COMPETITIONS.map((competition) => competition.code)
   )

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 import { message } from 'antd'
 import { FINISHED_STATUSES, SCHEDULED_STATUSES } from '../constants'
@@ -11,8 +11,16 @@ export function useMatches({ dateFrom, dateTo, competitions, statusFilter, token
   const [matches, setMatches] = useState([])
   const [loading, setLoading] = useState(false)
 
+  const apiBaseUrl = useMemo(() => {
+    const raw =
+      import.meta.env.VITE_FOOTBALL_API_BASE_URL ||
+      (import.meta.env.DEV ? '/football-data' : 'https://api.football-data.org')
+    return raw.replace(/\/$/, '')
+  }, [])
+
   useEffect(() => {
     let isMounted = true
+    const controller = new AbortController()
 
     async function fetchMatches() {
       if (!token) {
@@ -42,11 +50,12 @@ export function useMatches({ dateFrom, dateTo, competitions, statusFilter, token
         const responses = await Promise.all(
           competitions.map(async (competitionCode) => {
             const response = await fetch(
-              `https://api.football-data.org/v4/competitions/${competitionCode}/matches?${params.toString()}`,
+              `${apiBaseUrl}/v4/competitions/${competitionCode}/matches?${params.toString()}`,
               {
                 headers: {
                   'X-Auth-Token': token
-                }
+                },
+                signal: controller.signal
               }
             )
 
@@ -81,7 +90,7 @@ export function useMatches({ dateFrom, dateTo, competitions, statusFilter, token
         }
       } catch (error) {
         console.error(error)
-        if (isMounted) {
+        if (isMounted && error.name !== 'AbortError') {
           message.error(error.message)
         }
       } finally {
@@ -95,8 +104,9 @@ export function useMatches({ dateFrom, dateTo, competitions, statusFilter, token
 
     return () => {
       isMounted = false
+      controller.abort()
     }
-  }, [competitions, dateFrom, dateTo, statusFilter, token])
+  }, [apiBaseUrl, competitions, dateFrom, dateTo, statusFilter, token])
 
   return { matches, loading }
 }
