@@ -5,24 +5,24 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   //only for development proxy
-  // server: {
-  //   proxy: {
-  //     '/football-data': {
-  //       target: 'https://api.football-data.org',
-  //       changeOrigin: true,
-  //       secure: true,
-  //       rewrite: (path) => path.replace(/^\/football-data/, '')
-  //     }
-  //   }
-  // },
-  // preview: {
-  //   proxy: {
-  //     '/football-data': {
-  //       target: 'https://api.football-data.org',
-  //       changeOrigin: true,
-  //       secure: true,
-  //       rewrite: (path) => path.replace(/^\/football-data/, '')
-  //     }
-  //   }
-  // }
+  server: {
+    proxy: {
+      '/football-data': {
+        target: 'https://api.football-data.org',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/football-data/, '')
+      }
+    }
+  },
+  preview: {
+    proxy: {
+      '/football-data': {
+        target: 'https://api.football-data.org',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/football-data/, '')
+      }
+    }
+  }
 })
