@@ -3,7 +3,8 @@ import process from 'process'
 export default async function handler(req, res) {
   const { competition, dateFrom, dateTo } = req.query
   
-  const token = process.env.FOOTBALL_DATA_TOKEN
+  const token = process.env.VITE_FOOTBALL_DATA_TOKEN
+  
 
   if (!competition || !dateFrom || !dateTo) {
     return res.status(400).json({ message: 'Missing query parameters' })
