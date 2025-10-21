@@ -49,7 +49,7 @@ export function useMatches({ dateFrom, dateTo, competition, statusFilter, token 
 
         const competitionCode = competition
         const response = await fetch(
-          `${apiBaseUrl}/v4/competitions/${competitionCode}/matches?${params.toString()}`,
+          `https://api.football-data.org/v4/competitions/${competitionCode}/matches?${params.toString()}`,
           {
             headers: {
               'X-Auth-Token': token
